@@ -1,5 +1,5 @@
 # tomatofft
-The Tomato Patch FFT is the fastest FFT in the world- but it may not be the most accurate. And it requires more work- it is O(N^2) but can be threaded down to individual bins.
+The Tomato Patch FFT is the fastest FFT in the world- but it may not be the most accurate. And it requires more work- it is O(N^2) but can be threaded down to individual bins where it becomes O(2N).
 This github repository is a scientific landmark, or perhaps it's just a trash dump.
 it all started one day when I was experimenting with python.
 I thought if i refactored fft, i could make a more efficient fft. That's kind of partially true.. but..
@@ -69,7 +69,8 @@ However, at this time, because the basis function is not truly a sigmoid(see the
 For the first half of the real fourier transform- they are identical once the tminus is considered.
 
 This means that each bin of the fft can be independently computed by a different thread, which internally needs N*2 transpose elements, N residual elements, N sigmoid elements, the input data,
-and N *2 storage- N * 7 float64 elements per thread, which must perform 1024 additions, 1024 multiplications, and 1024 swaps(N^2).
+and N *2 storage- N * 7 float64 elements per thread, which must perform 1024 additions, 1024 multiplications, and 1024 swaps(N * 2).
+As a result, tomatopatch can if fully parallelized return results in 2N.
 
 For radix-FFT, you only need a little over 2^k * N * 2 bytes and you only need O(N log N) operations.
 
