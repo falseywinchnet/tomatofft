@@ -92,7 +92,12 @@ and then use an accumulator with known positive offsets and another one with kno
 and then you can accumulate the range and eliminate floating point errors, by performing A additions of negative and B additions of positive, and then adding them together-
 it requires a maximum of N/2 swaps along with +1 additions over the normal summation, but allows for an even smaller data type due to not needing to worry about accumulation of error, ie.
 since we can pre-record swapping as a selective transpose, it means that one can very reasonably build an FFT out of nothing but gates,
-and compute an entire FFT in one cycle.
+and compute an entire FFT in one cycle- and what's more, you could have an analogue FFT. true, you will have decimation, each point in the FFT is an approximation,
+but in terms of the resolution, you could compute a really high resolution, high precision fft and have floating point accuracy of some 1024+ bits, 
+and then use that to make an analogue multiplier circuit, and build accumulators and networks for each bin, and in the end, apply a specific time delay
+to each output, and your output will be a time-> frequency transposing circuit, which, owing to the invertibility of this method by simply using the conjugate,
+means that you can transform from time to frequency and back to time in an analog fashion, within the limits of accuracy and noise in your circuit.
+
 
 For radix-RFFT(in frequency, which is the least compute intensive,but which requires more total time), the total
 and the time complexity are both O(N log N) time complexity.
