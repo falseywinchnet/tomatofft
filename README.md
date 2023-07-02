@@ -70,23 +70,29 @@ twiddle_data = numpy.loadtxt('https://raw.githubusercontent.com/falseywinchnet/t
 def f(a:numpy.ndarray, b:numpy.ndarray):
   p = 0.0
   for index in numba.prange(512):
-    p += a[index]*b[index] may require a floating point accumulator to handle minor errors?
+    p += a[index]*b[index] # may require a floating point accumulator to handle minor errors?
   return p
 
 @numba.njit(numba.complex128[:](numba.float64[:],numba.float64[:,:],numba.float64[:,:]),nogil=True,cache=True,fastmath=True,error_model='numpy')
 def tomato_fft(input:numpy.ndarray,real:numpy.ndarray,imag:numpy.ndarray):
-  for n in
-range(512):
+  result = numpy.arange(0,512,dtype=numpy.complex128)
+  for n in range(512):
       result[n] = f(input,real[n,:])  + 1j * f(input,imag[n,:])
   return result
 
 #example use:
-input = numpy.arange(0,512,dtype=numpy.float654)
+input = numpy.arange(0,512,dtype=numpy.float64)
 output = tomato_fft(input,twiddle_data.real,twiddle_data.imag)
 ```
 The operations presented are 2N multiplications, 2N additions, for each element,
 which means that overall the complexity is 2N^N(in big O, that's O(N^2)) but in a parallelized instance,
 we can return results in 2N. 
+in terms of numerical precision, it's possible to apply the multiplication, then sort according to a known, predetermined pattern(the identity matrix forward)
+and then use an accumulator with known positive offsets and another one with known negative offsets(sorted, you have negative followed by positive)
+and then you can accumulate the range and eliminate floating point errors, by performing A additions of negative and B additions of positive, and then adding them together-
+it requires a maximum of N/2 swaps along with +1 additions over the normal summation, but allows for an even smaller data type due to not needing to worry about accumulation of error, ie.
+since we can pre-record swapping as a selective transpose, it means that one can very reasonably build an FFT out of nothing but gates,
+and compute an entire FFT in one cycle.
 
 For radix-RFFT(in frequency, which is the least compute intensive,but which requires more total time), the total
 and the time complexity are both O(N log N) time complexity.
