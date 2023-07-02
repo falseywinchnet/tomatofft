@@ -16,8 +16,8 @@ then sum it by the columns- not a pretty picture in terms of the complexity requ
 However- my obsession didn't stop there, and i figured out that i could sort the fft and reverse the sorting.
 I then found the basis function, which is, for the most part, a sigmoid. Who knew!
 
-```py
 Here is some code to use the identity matrix from the fft product:
+```py
 reversed_seq= np.loadtxt('https://raw.githubusercontent.com/falseywinchnet/tomatofft/main/reversed_seq.txt', dtype=numpy.complex128).astype(dtype=int)
 reversed_seq_i= np.loadtxt('https://raw.githubusercontent.com/falseywinchnet/tomatofft/main/reversed_seq_i.txt', dtype=numpy.complex128).astype(dtype=int)
 twiddle_data = np.loadtxt('https://raw.githubusercontent.com/falseywinchnet/tomatofft/main/twiddle_data.txt', dtype=numpy.complex128)
