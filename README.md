@@ -381,5 +381,5 @@ mappings = retrieve_and_expand_mappings(v2) #this may take a long time due to sy
 twiddle = evaluate_mappings(mappings,m,numpy.squeeze(twiddlefactors))
 #you might consider an alternative library if it generates identical results.
 #your output results should behave similar to the twiddle as indicated in the demo at the top of this page,
-but be substantially closer to numpy.pi. 
+#but be substantially closer to numpy- i computed the twiddle factors and butterfly matrix using mpc with 19 bits of #decimal precision, which is the maximum for complex256 accuracy.
 ```
