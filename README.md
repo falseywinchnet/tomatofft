@@ -15,19 +15,14 @@ However- my obsession didn't stop there, and i figured out that i could sort the
 I then found the basis function, which is, for the most part, a sigmoid. Who knew!
 
 ```py
+reversed_seq= np.loadtxt('https://raw.githubusercontent.com/falseywinchnet/tomatofft/main/reversed_seq.txt', dtype=numpy.complex128).astype(dtype=int)
+reversed_seq_i= np.loadtxt('https://raw.githubusercontent.com/falseywinchnet/tomatofft/main/reversed_seq_i.txt', dtype=numpy.complex128).astype(dtype=int)
+twiddle_data = np.loadtxt('https://raw.githubusercontent.com/falseywinchnet/tomatofft/main/twiddle_data.txt', dtype=numpy.complex128)
 
-d1 = numpy.zeros((512,512), dtype=numpy.half)
-d2= numpy.zeros((512,512), dtype=numpy.half)
+d1 = numpy.zeros((512,512), dtype=numpy.complex128)
+d2= numpy.zeros((512,512), dtype=numpy.complex128)
 
-tn = numpy.sort(twiddle.real,axis=1)
-t44 = numpy.sort(twiddle.imag,axis=1)
-
-
-tz = numpy.argsort(numpy.arctan(twiddle.real),axis=1)
-reversed_seq = np.argsort(tz,axis=1).T
-tzi = numpy.argsort(numpy.arctan(twiddle.imag),axis=1)
-reversed_seq_i = np.argsort(tzi,axis=1).T
-
+tn = numpy.sort(twiddle_data.real,axis=1)
 
 tq = numpy.zeros(512,dtype=numpy.half)
 for each in range(512):
@@ -36,24 +31,24 @@ for each in range(512):
 tdec = tq/512
 
 for i in range(512):
-  d2[i,:]= (data[i])
+  d2[i,:]= (data[i]) #this is the only columnorder operation needed
 
 d3 =d2.copy()
 
 for j in range(512):
-    d2[:,j] *= tdec[j]
+    d2[j,:] *= tdec[:] #row order
 
-d2 = d3 *tminus + d2
+d2 = d2 # +  d3 *tminus note: to get tminus(the residual distribution), just subtract tq/512 from tn. 
 
 d1 = d2.copy()
 
-d1 = d1[np.arange(d1.shape[0]),reversed_seqr]
-d2 = d2[np.arange(d2.shape[0]),reversed_seqi]
+d1 = d1[np.arange(d1.shape[0]),reversed_seqr] #row order
+d2 = d2[np.arange(d2.shape[0]),reversed_seqi]#row order
 print(d1.shape)
 
 eb = numpy.zeros(512, dtype=numpy.csingle)
 for i in range(512):
-  eb[i] = numpy.sum(d1[i,:]) + 1j * numpy.sum(d2[i,:])
+  eb[i] = numpy.sum(d1[i,:]) + 1j * numpy.sum(d2[i,:]) #row order
 ```
 
 Note that in the code, we are simply filling the array with one set of multiplications(ordinary multiplications, N in number), and then there is N * N additions,
@@ -68,13 +63,15 @@ which refactor to O(N log N) time complexity.
 The difference is  N / log N. At less than 512 elements or equal to it, it's faster than radix, requiring less operations overall.
 Additionally, further optimizations may be possible that I just havn't figured out.
 
-All of tomatopatch FFT is elementwise. Most is highly vectorizable. None requires complex math, which means it is highly acceleratable on any platform and invariant to precision issues.
+All of tomatopatch FFT is elementwise. Most is highly vectorizable(all but the first fill are row order).
+None requires complex math, which means it is highly acceleratable on any platform and invariant to precision issues.
 However, at this time, because the basis function is not truly a sigmoid(see the tminus image), the results are not perfectly precise, but they are CLOSE.
-For the first half of the real fourier transform- they are identical.
+For the first half of the real fourier transform- they are identical once the tminus is considered.
 
-Now, here's the complexity- you need more storage space. You need more space to do the computations. A lot more. You need a total of N * N * 5 bytes, fully unrolled.
-Given the above, it's possible you could just accumulate it, but you still need space for the transforms and the residual(not all rows need to be stored, i think). I estimate it's on the order of 3* N * N bytes total. 
-For radix-FFT, you only need a little over 2^k * N * 2 bytes.
+This means that each bin of the fft can be independently computed by a different thread, which internally needs N*2 transpose elements, N residual elements, N sigmoid elements, the input data,
+and N *2 storage- N * 7 float64 elements per thread, which must perform 1024 additions, 1024 multiplications, and 1024 swaps(N^2).
+
+For radix-FFT, you only need a little over 2^k * N * 2 bytes and you only need O(N log N) operations.
 
 So, depending on your time-space tradeoffs, tomato patch FFT may in fact be a more optimal, faster, better approach. It does not depend on any convolution.
 It can be incorporated into tensors or artificial intelligence methods, especially so, because of the higher optimal behavior.
