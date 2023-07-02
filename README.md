@@ -56,7 +56,7 @@ and then we need to do N swaps, and then we need to do N*N additions(in sequence
 Total : 2 * N * N additions, N multiplications, N swaps. Maybe N * N multiplications IF we consider the residual and we can't simplify it further.
 The overall time complexity is - O(N^2). it might be a little bit higher if there's more tuning needed.
 
-For radix-RFFT(in frequency, which is the least compute intensive,but which requires more space), you need N * 2^k * 4  multiplications, 
+For radix-RFFT(in frequency, which is the least compute intensive,but which requires more total time), you need N * 2^k * 4  multiplications, 
 which become O(N log N) real multiplications and N * 2^k * 4 additions(we'll count subtractions as additions for simplicity),
 which refactor to O(N log N) time complexity.
 
