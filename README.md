@@ -1,5 +1,7 @@
 # tomatofft
-The Tomato Patch FFT is the fastest FFT in the world- but it may not be the most accurate. And it requires more work- it is O(N^2) but can be threaded down to individual bins where it becomes O(2N) per thread, and since all operations are elementwise, it can at maximum become O(N^2/P) - O(N).  The algorithm is MIT licensed because you really can't patent this sort of thing, it's just the FFT.
+The Tomato Patch FFT is the fastest FFT in the world. But it requires more work- it is O(N^2) overall.
+and requires more storage- O(N^2) overall.
+However, it has one difference which makes all the difference in the world- it can be threaded down to individual bins where it becomes O(2N) per thread, and since all operations are elementwise, it can at maximum become O(N^2/P) - O(N).  The algorithm is MIT licensed because you really can't patent this sort of thing, it's just the FFT.
 
 This github repository is a scientific landmark, or perhaps it's just a trash dump.
 it all started the other day when I was experimenting with python on a sweltering sunny day.
