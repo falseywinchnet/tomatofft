@@ -1,5 +1,5 @@
 # tomatofft
-The Tomato Patch FFT is the fastest FFT in the world- but it may not be the most accurate.
+The Tomato Patch FFT is the fastest FFT in the world- but it may not be the most accurate. And it requires more work- it is O(N^2) but can be threaded down to individual bins.
 This github repository is a scientific landmark, or perhaps it's just a trash dump.
 it all started one day when I was experimenting with python.
 I thought if i refactored fft, i could make a more efficient fft. That's kind of partially true.. but..
