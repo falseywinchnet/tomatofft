@@ -47,18 +47,18 @@ d2 = d3 *tminus + d2
 
 d1 = d2.copy()
 
-d1 = d1[np.arange(d1.shape[1]),reversed_seqr].T
-d2 = d2[np.arange(d2.shape[1]),reversed_seqi].T
+d1 = d1[np.arange(d1.shape[0]),reversed_seqr]
+d2 = d2[np.arange(d2.shape[0]),reversed_seqi]
+print(d1.shape)
 
-
-result = numpy.zeros(512, dtype=numpy.csingle)
+eb = numpy.zeros(512, dtype=numpy.csingle)
 for i in range(512):
-  result[i] = numpy.sum(d1[:,i]) + 1j * numpy.sum(d2[:,i])
+  eb[i] = numpy.sum(d1[i,:]) + 1j * numpy.sum(d2[i,:])
 ```
 
 Note that in the code, we are simply filling the array with one set of multiplications(ordinary multiplications, N in number), and then there is N * N additions,
-and then we need to do N swaps, and then there's a pair of transposes- 2 * N*(N-1)/2 swaps - , and then we need to do N*N additions(in sequence!), and then we're done.
-Total : 2 * N * N additions, N multiplications, N^2 swaps.
+and then we need to do N swaps, and then we need to do N*N additions(in sequence!), and then we're done.
+Total : 2 * N * N additions, N multiplications, N swaps.
 The overall time complexity is - O(N^2). it might be a little bit higher if there's more tuning needed.
 
 For radix-RFFT(in frequency, which is the least compute intensive,but which requires more space), you need N * 2^k * 4  multiplications, 
