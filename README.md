@@ -71,6 +71,8 @@ For the first half of the real fourier transform- they are identical once the tm
 This means that each bin of the fft can be independently computed by a different thread, which internally needs N*2 transpose elements, N residual elements, N sigmoid elements, the input data,
 and N *2 storage- N * 7 float64 elements per thread, which must perform 1024 additions, 1024 multiplications, and 1024 swaps(N * 2).
 As a result, tomatopatch can if fully parallelized return results in 2N.
+what is more, on servers, where all the operations can be computed(because no complex math needed), where AVX-512 is present and allows up to 4 doubles or 8 floats, 
+the compute complexity is reduced to N/2(in terms of time-til-result, not total computations over all bins).
 
 For radix-FFT, you only need a little over 2^k * N * 2 bytes and you only need O(N log N) operations.
 
