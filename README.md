@@ -1,7 +1,13 @@
 # tomatofft
 The Tomato Patch FFT is the fastest FFT in the world. But it requires more work- it is O(N^2) overall.
-and requires more storage- O(N^2) overall.
-However, it has one difference which makes all the difference in the world- it can be threaded down to individual bins where it becomes O(2N) per thread, and since all operations are elementwise, it can at maximum become O(N^2/P) - O(N).  The algorithm is MIT licensed because you really can't patent this sort of thing, it's just the FFT.
+and requires more storage- O(N^2) overall. However, it has one difference which makes all the difference in the world- it can be threaded down to individual bins
+where it becomes O(2N) per thread, and since all operations are elementwise, it can at minimum become O(N^2/P) - O(N). 
+With cuda cores = N(modern GPUS are quickly exceeding 4000 cuda cores) and general memory constraints per core of P * N ^ N * precision 
+16 * N^2 bytes + 8 * N bytes  = a little over 256MB.
+For an FFT of size 32768, you will need 32,768 cuda cores and 16GB of main memory(RTX 4090 is almost halfway there, so assume another 8 years).
+
+
+The algorithm is MIT licensed because you really can't patent this sort of thing, it's just the FFT.
 
 This github repository is a scientific landmark, or perhaps it's just a trash dump.
 it all started the other day when I was experimenting with python on a sweltering sunny day.
