@@ -58,6 +58,27 @@ result = numpy.zeros(512, dtype=numpy.csingle)
 for i in range(512):
   result[i] = numpy.sum(d1[i,:]) + 1j * numpy.sum(d2[i,:]) #row order
 #compare the result here to numpy FFT- you'll note that its quite close despite using transposition and addition.
+
+
+sort_order_3 = np.zeros_like(reversed_seq)
+
+# Process each pair of corresponding rows
+for i in range(reversed_seq.shape[0]):
+    # Get the current pair of rows
+    row_1 = reversed_seq[:,i]
+    row_2 = reversed_seq_i[:,i]
+
+    # Create a mapping from the first sort order to the second
+    mapping = np.argsort(row_1)[row_2]
+
+    # Store the result in the output array
+    sort_order_3[:,i] = mapping
+
+#here, for example, assume you compute d1 instead
+
+d1 = d1[np.arange(d1.shape[0]),reversed_seq] #row order
+d2 = d1[sort_order_3,np.arange(d1.shape[0])]#row order
+#ie you can achieve the imaginary from the real
 ```
 And here is some code to compute the FFT according to the tomatoFFT with the minimum in operations.
 Note that the fft twiddle factors here were computed with 256 bits of precision and may not precisely match
