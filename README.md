@@ -2,8 +2,7 @@
 The Tomato Patch FFT is the fastest, laziest FFT in the world. But it requires more work- it is O(N^2) overall.
 Additionally- it may already exist. Which is why I named my implementation after my cat.
 
-and requires more storage- O(N^2) overall. However, it has one difference which makes all the difference in the world- it can be threaded down to individual bins
-where it becomes O(3N) per thread, and since all operations are elementwise, it can at minimum become O(N^2/P) - O(N).\
+and requires more storage- O(N^2) overall. However, it has one difference which makes all the difference in the world- it can be threaded down to individual bins  where it becomes O(3N) per thread, and since all operations are elementwise, it can at minimum become O(N^2/P) - O(N).\
 With cuda cores = N(modern GPUS are quickly exceeding 4000 cuda cores) and general memory constraints per core of P * N ^ N * precision 16 * N^2 bytes + 8 * N bytes  = a little over 256MB.\
 For an FFT of size 32768, you will need 32,768 cuda cores and 16GB of main memory(RTX 4090 is almost halfway there, so assume another 8 years).\
 What this means is that for certain implementations, computation quickly approaches O(1).
@@ -29,18 +28,15 @@ Here is some code to use the identity matrix from the fft product:
 ```py
 reversed_seq= np.loadtxt('https://raw.githubusercontent.com/falseywinchnet/tomatofft/main/reversed_seq.txt', dtype=numpy.complex128).astype(dtype=int)
 reversed_seq_i= np.loadtxt('https://raw.githubusercontent.com/falseywinchnet/tomatofft/main/reversed_seq_i.txt', dtype=numpy.complex128).astype(dtype=int)
-twiddle_data = np.loadtxt('https://raw.githubusercontent.com/falseywinchnet/tomatofft/main/twiddle_data.txt', dtype=numpy.complex128)
 
 d1 = numpy.zeros((512,512), dtype=numpy.complex128)
 d2= numpy.zeros((512,512), dtype=numpy.complex128)
 
-tn = numpy.sort(twiddle_data.real,axis=1)
 
-tq = numpy.zeros(512,dtype=numpy.half)
-for each in range(512):
-  tq[each] = numpy.sum(tn[:,each])
+x = np.linspace(0, 512, 1024)
+# Scale x by 2*pi/512 and calculate the -cos values
+term1 = -np.cos(x * 2 * np.pi / 512)[0:512]
 
-tdec = tq/512 #is a sigmoid? wow!
 
 for i in range(512):
   d2[i,:]= (data[i]) #this is the only columnorder operation needed
@@ -61,6 +57,7 @@ print(d1.shape)
 result = numpy.zeros(512, dtype=numpy.csingle)
 for i in range(512):
   result[i] = numpy.sum(d1[i,:]) + 1j * numpy.sum(d2[i,:]) #row order
+#compare the result here to numpy FFT- you'll note that its quite close despite using transposition and addition.
 ```
 And here is some code to compute the FFT according to the tomatoFFT with the minimum in operations.
 Note that the fft twiddle factors here were computed with 256 bits of precision and may not precisely match
@@ -414,7 +411,9 @@ m = M.flatten()
 
 mappings = retrieve_and_expand_mappings(v2) #this may take a long time due to sympy being slow.
 twiddle = evaluate_mappings(mappings,m,numpy.squeeze(twiddlefactors))
-#you might consider an alternative library if it generates identical results.
+#you might consider an alternative library if it generates identical results
+
+
 #your output results should behave similar to the twiddle as indicated in the demo at the top of this page,
 #but be substantially closer to numpy- i computed the twiddle factors and butterfly matrix using mpc with 19 bits of #decimal precision, which is the maximum for complex256 accuracy.
 ```
