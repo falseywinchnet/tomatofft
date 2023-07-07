@@ -44,7 +44,7 @@ for i in range(512):
 d3 =d2.copy()
 
 for j in range(512):
-    d2[j,:] *= tdec[:] #row order
+    d2[j,:] *= term1[:] #row order
 
 d2 = d2 # +  d3 *tminus note: to get tminus(the residual distribution), just subtract tq/512 from tn. 
 
