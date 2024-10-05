@@ -2,6 +2,7 @@
 The Tomato Patch FFT repository houses my explorations of reverse-engineering the DFT by tracing the FFT to produce the DFT identity matrix.  After refactoring all the complex operations, and then performing all of them, i came up with some pretty images:
 https://imgur.com/a/3sFjGIW
 The real and the complex became two arrays of 512x512. To perform the rfft, you needed to multiply the input by all elements along the rows, then sum it by the columns- not a pretty picture in terms of the complexity required. That's a lot of math!
+the lessons learned here could be applied to reverse engineering other complex transforms to find their discrete equivalents.
 
 However- my obsession didn't stop there, and i figured out that i could sort the fft and reverse the sorting.
 I then found the basis function, which is, for the most part, a sigmoid. Who knew!
