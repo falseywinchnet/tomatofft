@@ -6,12 +6,17 @@ The real and the complex became two arrays of 512x512. To perform the rfft, you 
 However- my obsession didn't stop there, and i figured out that i could sort the fft and reverse the sorting.
 I then found the basis function, which is, for the most part, a sigmoid. Who knew!
 
-in theory, a close-to-acceptable(depending on the number of elements) faster than DFT operation is possible by virtue of the following operations:
+in practice, transposition and out of order selection is a memory controller optimization problem and CPUs are not good at it.
+The fastest FFT I know of is an in-place decimation in time approach using mixed radix and a LUT.
+But, there are often attempts to find a faster approach through taking shortcuts. 
+
+in theory, a close-to-acceptable(depending on the number of elements) faster operation is possible by virtue of the following operations:
 
 the input array is multiplied by an initial twiddle factor.
 it is then summarized out of order N different ways to produce each of the coefficients.
 by virtue of technicality, using N accumulators in parallel on the right hardware is faster than O(N log N) operations in K steps.
 Not more efficient, just faster. and, in fact, breaking up the FFT into smaller DFT is precisely how the latest analogue FFT works.
+
 
 
 Here is some code to use the identity matrix from the fft product:
